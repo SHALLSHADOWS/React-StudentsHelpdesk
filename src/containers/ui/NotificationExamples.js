@@ -4,70 +4,65 @@ import { Card, CardBody, CardTitle, Button, CardSubtitle } from 'reactstrap';
 import IntlMessages from 'helpers/IntlMessages';
 import { NotificationManager } from 'components/common/react-notifications';
 
-const NotificationExamples = () => {
-  const createNotification = (type, className) => {
-    const cName = className || '';
-    switch (type) {
-      case 'primary':
-        NotificationManager.primary(
-          'This is a notification!',
-          'Primary Notification',
-          3000,
-          null,
-          null,
-          cName
-        );
-        break;
-      case 'secondary':
-        NotificationManager.secondary(
-          'This is a notification!',
-          'Secondary Notification',
-          3000,
-          null,
-          null,
-          cName
-        );
-        break;
-      case 'info':
-        NotificationManager.info('Info message', '', 3000, null, null, cName);
-        break;
-      case 'success':
-        NotificationManager.success(
-          'Success message',
-          'Title here',
-          3000,
-          null,
-          null,
-          cName
-        );
-        break;
-      case 'warning':
-        NotificationManager.warning(
-          'Warning message',
-          'Close after 3000ms',
-          3000,
-          null,
-          null,
-          cName
-        );
-        break;
-      case 'error':
-        NotificationManager.error(
-          'Error message',
-          'Click me!',
-          5000,
-          () => {
-            alert('callback');
-          },
-          null,
-          cName
-        );
-        break;
-      default:
-        NotificationManager.info('Info message');
-        break;
-    }
-  };
+export const createNotification = (type, className, message) => {
+  const cName = className || '';
+  switch (type) {
+    case 'primary':
+      NotificationManager.primary(
+        message || 'This is a notification!',
+        'Primary Notification',
+        3000,
+        null,
+        null,
+        cName
+      );
+
+      break;
+    case 'secondary':
+      NotificationManager.secondary(
+        'This is a notification!',
+        'Secondary Notification',
+        3000,
+        null,
+        null,
+        cName
+      );
+
+      break;
+    case 'info':
+      NotificationManager.info('Info message', '', 3000, null, null, cName);
+      break;
+    case 'success':
+      NotificationManager.success(message, 'success', 3000, null, null, cName);
+      break;
+    case 'warning':
+      NotificationManager.warning(
+        'Warning message',
+        'Close after 3000ms',
+        3000,
+        null,
+        null,
+        cName
+      );
+      break;
+    case 'error':
+      NotificationManager.error(
+        message || 'Error message',
+        'error!',
+        5000,
+        () => {
+          alert('callback');
+        },
+        null,
+        cName
+      );
+      break;
+    default:
+      NotificationManager.info('Info message');
+      break;
+  }
+
+  const NotificationExamples = () => {};
 
   return (
     <Card>
@@ -106,9 +101,9 @@ const NotificationExamples = () => {
           outline
           className="mb-3"
           color="success"
-          onClick={() => createNotification('success')}
+          onClick={() => createNotification()}
         >
-          <IntlMessages id="alert.success" />
+          <IntlMessages id="camarala" />
         </Button>{' '}
         <Button
           outline
@@ -153,7 +148,13 @@ const NotificationExamples = () => {
         <Button
           className="mb-3"
           color="success"
-          onClick={() => createNotification('success', 'filled')}
+          onClick={() =>
+            createNotification(
+              'success',
+              'filled',
+              'Votre message personnalisé ici'
+            )
+          }
         >
           <IntlMessages id="alert.success" />
         </Button>{' '}
@@ -176,4 +177,4 @@ const NotificationExamples = () => {
   );
 };
 
-export default NotificationExamples;
+export default createNotification;
