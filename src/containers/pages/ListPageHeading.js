@@ -16,20 +16,18 @@ import { injectIntl } from 'react-intl';
 
 import { Colxx, Separator } from 'components/common/CustomBootstrap';
 import IntlMessages from 'helpers/IntlMessages';
-
-
+import {createNotification} from 'containers/ui/NotificationExamples';
 
 const ListPageHeading = ({
   intl,
-  displayMode,
-  changeDisplayMode,
+  fetchData,
   handleChangeSelectAll,
   changeOrderBy,
   changePageSize,
   selectedPageSize,
   totalItemCount,
   selectedOrderOption,
-
+  selectedItems,
   startIndex,
   endIndex,
   selectedItemsLength,
@@ -43,7 +41,30 @@ const ListPageHeading = ({
   const [dropdownSplitOpen, setDropdownSplitOpen] = useState(false);
   const [displayOptionsIsOpen, setDisplayOptionsIsOpen] = useState(false);
   const { messages } = intl;
-  const [selectedItems, setSelectedItems] = useState([]);
+  
+  
+  //console.log(selectedItems);
+  const handleDelete = async () => {
+    console.log('Suppression des éléments sélectionnés :', selectedItems);
+  
+    const response = await fetch('http://localhost:8080/api/tickets', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(selectedItems),
+    });
+  
+    if (response.ok) {
+      createNotification('success', 'filled', 'Suppression réussie');
+      console.log('Suppression réussie');
+      // Appeler la fonction pour mettre à jour les données après la suppression réussie
+      fetchData();
+    } else {
+      console.error('Erreur lors de la suppression');
+      createNotification('error', 'filled', 'Erreur lors de la suppression');
+    }
+  };
 
 
   return (
@@ -97,7 +118,7 @@ const ListPageHeading = ({
                 className="dropdown-toggle-split btn-lg"
               />
               <DropdownMenu right>
-                <DropdownItem>
+                <DropdownItem onClick={handleDelete}>
                   <IntlMessages id="pages.delete" />
                 </DropdownItem>
                 <DropdownItem>

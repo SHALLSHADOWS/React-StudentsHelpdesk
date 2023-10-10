@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { adminRoot, currentUser } from 'constants/defaultValues'
+import { useHistory } from 'react-router-dom';
 import DropzoneExample from 'containers/forms/DropzoneExample';
 import {
   Row,
@@ -17,8 +19,10 @@ import Select from 'react-select';
 import CustomSelectInput from 'components/common/CustomSelectInput';
 import IntlMessages from 'helpers/IntlMessages';
 import { Colxx } from 'components/common/CustomBootstrap';
+import {createNotification} from 'containers/ui/NotificationExamples';
 
 const HelloWorld = () => {
+  const history = useHistory();
   const [selectData, setSelectData] = useState([]);
   const [formValues, setFormValues] = useState({
     email: '',
@@ -137,8 +141,12 @@ const HelloWorld = () => {
 
     if (response.ok) {
       console.log('Ticket creation successful', formData);
+      createNotification('success', 'filled','Ticket creation successful')
+      history.push(adminRoot);
     } else {
       console.log('Ticket creation failed', formData);
+      createNotification('error', 'filled','Ticket creation failed')
+     
     }
   };
 
@@ -161,6 +169,7 @@ const HelloWorld = () => {
                   name="email"
                   id="exampleEmail"
                   onChange={handleChange}
+                  required
                 />
 
                 <FormText color="muted">
@@ -176,6 +185,7 @@ const HelloWorld = () => {
                 name="subject"
                 value={formValues.subject}
                 onChange={handleChange}
+                required
               />
 
               <Label className="mt-4">
@@ -197,6 +207,7 @@ const HelloWorld = () => {
                 name="description"
                 id="exampleText"
                 onChange={handleChange}
+                required
               />
 
               <Label className="mt-4">Attachment</Label>
@@ -205,6 +216,7 @@ const HelloWorld = () => {
               <Button color="primary" className="mt-4">
                 <IntlMessages id="forms.submit" />
               </Button>
+        
             </Form>
           </CardBody>
         </Card>

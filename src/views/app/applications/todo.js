@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Row,
   Button,
@@ -10,6 +11,13 @@ import {
   Collapse,
   ButtonDropdown,
   CustomInput,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  FormGroup,
+  Label,
+  Input,
 } from 'reactstrap';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
@@ -52,9 +60,59 @@ const TodoApp = ({
   selectedTodoItemsChangeAction,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [dropdownSplitOpen, setDropdownSplitOpen] = useState(false);
   const [displayOptionsIsOpen, setDisplayOptionsIsOpen] = useState(false);
   const [lastChecked, setLastChecked] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState('');
+
+  /*affiche le modal status */
+
+  const toggleStatusModal = () => {
+    setStatusModalOpen(!statusModalOpen);
+  };
+  /*gere le satus selectionner */
+  const handleStatusChange = (e) => {
+    setSelectedStatus(e.target.value);
+    console.log('Selected Status:', e.target.value);
+    console.log('Selected Status:', selectedStatus);
+  };
+
+  const handleChangePriorityLevel = () => {
+    console.log(
+      'Changement de Priority des éléments suivants : ',
+      selectedItems
+    );
+  };
+
+  const handleStatusRequest =()=>{
+ // Envoyez la requête à l'API ici
+ const requestData = {
+  ids: selectedItems, // Liste des IDs sélectionnés
+  status: selectedStatus, // Statut sélectionné
+};
+
+axios
+  .put('http://localhost:8080/api/tickets/UpdateStatus', requestData)
+  .then((response) => {
+    // Gérez la réponse ici
+    console.log("Réponse de l'API:", response.data);
+   
+  })
+  .catch((error) => {
+    // Gérez les erreurs ici
+    console.error("Erreur lors de l'appel API:", error);
+  });
+
+  console.log(requestData)
+
+  }
+
+  const handleChangeStatus = () => {
+    toggleStatusModal(); 
+    console.log('Changement de statut des éléments suivants : ', selectedItems);
+   
+  };
 
   useEffect(() => {
     document.body.classList.add('right-menu');
@@ -153,11 +211,12 @@ const TodoApp = ({
                     className="dropdown-toggle-split btn-lg"
                   />
                   <DropdownMenu right>
-                    <DropdownItem>
-                      <IntlMessages id="todo.action" />
+                    <DropdownItem onClick={handleChangeStatus}>
+                      <IntlMessages id="Change Status" />
                     </DropdownItem>
-                    <DropdownItem>
-                      <IntlMessages id="todo.another-action" />
+
+                    <DropdownItem onClick={handleChangePriorityLevel}>
+                      <IntlMessages id="Change Priority" />
                     </DropdownItem>
                   </DropdownMenu>
                 </ButtonDropdown>
@@ -225,6 +284,7 @@ const TodoApp = ({
                   item={item}
                   handleCheckChange={handleCheckChange}
                   isSelected={loaded ? selectedItems.includes(item.id) : false}
+                  
                 />
               ))
             ) : (
@@ -235,10 +295,39 @@ const TodoApp = ({
       </Row>
       {loaded && <TodoApplicationMenu />}
       <AddNewTodoModal
-      
         toggleModal={() => setModalOpen(!modalOpen)}
         modalOpen={modalOpen}
       />
+
+      {/* Modal pour la sélection de l'état */}
+      <Modal isOpen={statusModalOpen} toggle={toggleStatusModal}>
+        <ModalHeader toggle={toggleStatusModal}>Select Status</ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <Label for="statusSelect">Status:</Label>
+            <Input
+              type="select"
+              name="status"
+              id="statusSelect"
+              value={selectedStatus}
+              onChange={handleStatusChange}
+            >
+              <option value="PENDING">Pending</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="COMPLETED">Completed</option>
+              {/* Ajoutez ici d'autres options d'état selon vos besoins */}
+            </Input>
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={handleStatusRequest}>
+            Save
+          </Button>
+          <Button color="secondary" onClick={toggleStatusModal}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 };

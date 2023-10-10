@@ -11,6 +11,7 @@ const getIndex = (value, arr, prop) => {
       return i;
     }
   }
+
   return -1;
 };
 
@@ -32,6 +33,8 @@ const categories = [
 */
 
 const DataListPages = ({ match }) => {
+
+  
   const [isLoaded, setIsLoaded] = useState(false);
   const [displayMode, setDisplayMode] = useState('list');
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,27 +56,35 @@ const DataListPages = ({ match }) => {
     setCurrentPage(1);
   }, [selectedPageSize, selectedOrderOption]);
 
-  useEffect(() => {
-    async function fetchData() {
-      axios
-        .get(
-          `${apiUrl}?pageSize=${selectedPageSize}&currentPage=${currentPage}&orderBy=${selectedOrderOption.column}&search=${search}`
-        )
-        .then((res) => {
-          console.log(res.data);
-          return res.data;
-        })
-        .then((data) => {
-          setTotalPage(data.totalPage);
-          setItems(data); // Mettez à jour les données des tickets
-          setSelectedItems([]);
-          setTotalItemCount(data.length); // Mettez à jour le nombre total de tickets
-          setIsLoaded(true);
-        });
-    }
-    fetchData();
-  }, [selectedPageSize, currentPage, selectedOrderOption, search]);
-  
+ // Define fetchData function
+const fetchData = async () => {
+  await axios
+    .get(
+      `${apiUrl}?pageSize=${selectedPageSize}&currentPage=${currentPage}&orderBy=${selectedOrderOption.column}&search=${search}`
+    )
+    .then((res) => {
+      console.log(res.data);
+      return res.data;
+    })
+    .then((data) => {
+      setTotalPage(data.totalPage);
+      setItems(data); // Update ticket data
+      setSelectedItems([]);
+      setTotalItemCount(data.length); // Update total number of tickets
+      setIsLoaded(true);
+    });
+};
+
+// Call fetchData inside useEffect
+useEffect(() => {
+  fetchData();
+}, [selectedPageSize, currentPage, selectedOrderOption, displayMode, search]);
+
+// Pass fetchData as a prop
+<ListPageHeading
+  fetchData={fetchData}
+  // ...other props
+/>
 
   const onCheckItem = (event, id) => {
     if (
@@ -155,6 +166,10 @@ const DataListPages = ({ match }) => {
     <>
       <div className="disable-text-selection">
         <ListPageHeading
+          fetchData={fetchData}
+          items={items}
+          onCheckItem={onCheckItem}
+          selectedItems={selectedItems}
           heading="menu.data-list"
           displayMode={displayMode}
           changeDisplayMode={setDisplayMode}
@@ -181,6 +196,7 @@ const DataListPages = ({ match }) => {
           orderOptions={orderOptions}
           pageSizes={pageSizes}
           toggleModal={() => setModalOpen(!modalOpen)}
+
         />
 
        

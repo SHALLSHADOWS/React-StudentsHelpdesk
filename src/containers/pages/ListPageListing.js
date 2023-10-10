@@ -22,7 +22,7 @@ const ListPageListing = ({
   onChangePage,
 }) => {
 
-  console.log(items);
+ 
   return (
     <Row>
       {items.map((product) => {

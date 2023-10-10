@@ -9,7 +9,29 @@ import {
   TODO_ADD_ITEM_SUCCESS,
   TODO_ADD_ITEM_ERROR,
   TODO_SELECTED_ITEMS_CHANGE,
+  ASSIGN_TICKET_SUCCESS,
+  ASSIGN_TICKET_ERROR,
+  ASSIGN_TICKET,
 } from '../contants';
+
+
+
+// actions.js
+export const assignTicketSuccess = () => ({
+  type: ASSIGN_TICKET_SUCCESS,
+});
+
+
+
+export const assignTicket = (ticketId, supportId) => ({
+  type: ASSIGN_TICKET,
+  payload: { ticketId, supportId },
+});
+
+export const assignTicketError = (error) => ({
+  type: ASSIGN_TICKET_ERROR,
+  payload: { error },
+});
 
 export const getTodoList = () => ({
   type: TODO_GET_LIST,

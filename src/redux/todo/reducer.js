@@ -9,6 +9,8 @@ import {
   TODO_ADD_ITEM_SUCCESS,
   TODO_ADD_ITEM_ERROR,
   TODO_SELECTED_ITEMS_CHANGE,
+  ASSIGN_TICKET_SUCCESS,
+  ASSIGN_TICKET_ERROR ,
 } from '../contants';
 
 const INIT_STATE = {
@@ -19,6 +21,8 @@ const INIT_STATE = {
   searchKeyword: '',
   orderColumn: null,
   loaded: false,
+  assignTicketLoading: false,
+  assignTicketError: null,
   labels: [
     { label: 'ukfuk', color: 'secondary' },
     { label: 'djyjd', color: 'primary' },
@@ -135,7 +139,26 @@ export default (state = INIT_STATE, action) => {
 
     case TODO_SELECTED_ITEMS_CHANGE:
       return { ...state, loaded: true, selectedItems: action.payload };
+
+
+      case ASSIGN_TICKET_SUCCESS:
+        return {
+          ...state,
+          assignTicketLoading: false,
+          // Vous pouvez mettre à jour l'état en conséquence ici
+        };
+  
+      case ASSIGN_TICKET_ERROR:
+        return {
+          ...state,
+          assignTicketLoading: false,
+          assignTicketError: action.payload.error,
+          // Vous pouvez gérer les erreurs ici si nécessaire
+        };
+
     default:
       return { ...state };
   }
+
+  
 };
